@@ -12,6 +12,8 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+from unittest import result
+from pkg_resources import ResolutionError
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -135,6 +137,45 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
+
+
+        def miniMax(gameState, agent,depth):
+            returnList = []
+            # to terminate state 
+            if gameState.getLegalActions(agent) == [] or depth == self.depth:
+               # print(self.evaluationFunction(gameState),0)
+                return [self.evaluationFunction(gameState),0]
+            
+
+            if agent == gameState.getNumAgents() -1:
+                depth += 1
+                nextAgent = self.index
+            else:
+                nextAgent = agent + 1
+            
+            
+            for action in gameState.getLegalActions(agent):
+                if returnList== []:
+                    nextValue = miniMax(gameState.generateSuccessor(agent,action),nextAgent,depth)
+                    returnList.append(nextValue[0])
+                    returnList.append(action)
+                    print()
+                else:
+                    previousValue = returnList[0]
+                    nextValue = miniMax(gameState.generateSuccessor(agent,action),nextAgent,depth)
+                    if agent == self.index:
+                        if nextValue[0] > previousValue:
+                            returnList[0] = nextValue[0]
+                            returnList[1] = action
+                    else:
+                        if nextValue[0] < previousValue:
+                            returnList[0] = nextValue[0]
+                            returnList[1] = action
+            
+            return returnList
+        return miniMax(gameState,self.index, 0)[1]
+
+
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -148,6 +189,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
