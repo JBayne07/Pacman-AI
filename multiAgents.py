@@ -140,38 +140,28 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
 
         def miniMax(gameState, agent,depth):
-            returnList = []
-            # to terminate state 
-            if gameState.getLegalActions(agent) == [] or depth == self.depth:
-               # print(self.evaluationFunction(gameState),0)
+            if gameState.isWin() or gameState.isLose() or depth == self.depth:
                 return [self.evaluationFunction(gameState),0]
             
-
-            if agent == gameState.getNumAgents() -1:
+            if agent == gameState.getNumAgents()-1:
                 depth += 1
                 nextAgent = self.index
             else:
                 nextAgent = agent + 1
             
-            
+            returnList = []
             for action in gameState.getLegalActions(agent):
-                if returnList== []:
-                    nextValue = miniMax(gameState.generateSuccessor(agent,action),nextAgent,depth)
-                    returnList.append(nextValue[0])
-                    returnList.append(action)
-                    print()
+                nextValue = miniMax(gameState.generateSuccessor(agent,action),nextAgent,depth)
+                if agent != self.index:
+                    if returnList == []:
+                        returnList = [nextValue[0], action]
+                    elif nextValue[0] < returnList[0]:
+                        returnList = [nextValue[0], action]
                 else:
-                    previousValue = returnList[0]
-                    nextValue = miniMax(gameState.generateSuccessor(agent,action),nextAgent,depth)
-                    if agent == self.index:
-                        if nextValue[0] > previousValue:
-                            returnList[0] = nextValue[0]
-                            returnList[1] = action
-                    else:
-                        if nextValue[0] < previousValue:
-                            returnList[0] = nextValue[0]
-                            returnList[1] = action
-            
+                    if returnList == []:
+                        returnList = [nextValue[0], action]
+                    elif nextValue[0] > returnList[0]:
+                        returnList = [nextValue[0], action]
             return returnList
         return miniMax(gameState,self.index, 0)[1]
 
@@ -205,6 +195,37 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
+
+        def expectiMax(gameState, agent,depth):
+            if gameState.isWin() or gameState.isLose() or depth == self.depth:
+                return [self.evaluationFunction(gameState),0]
+            
+            if agent == gameState.getNumAgents()-1:
+                depth += 1
+                nextAgent = self.index
+            else:
+                nextAgent = agent + 1
+            
+            returnList = []
+            for action in gameState.getLegalActions(agent):
+                nextValue = expectiMax(gameState.generateSuccessor(agent,action),nextAgent,depth)
+                if agent != self.index:
+                    weightedScore = nextValue[0] * (1.0 / len(gameState.getLegalActions(agent)))
+                    if returnList == []:
+                        returnList.append(weightedScore)
+                        returnList.append(action)
+                    else:
+                        returnList[0] += weightedScore
+                        returnList[1] = action
+                    
+                else:
+                    if returnList == []:
+                        returnList = [nextValue[0], action]
+                    elif nextValue[0] > returnList[0]:
+                        returnList = [nextValue[0], action]
+            return returnList
+        return expectiMax(gameState,self.index, 0)[1]
+        
         util.raiseNotDefined()
 
 def betterEvaluationFunction(currentGameState):
@@ -215,6 +236,8 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+
+    
     util.raiseNotDefined()
 
 # Abbreviation
