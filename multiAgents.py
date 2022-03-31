@@ -135,7 +135,47 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        value =  self.minimax(0, 0, gameState)
+        return value[1]
+        # util.raiseNotDefined()
+
+    def minimax(self, agent, currentDepth, gameState):
+        if(gameState.isWin() or gameState.isLose() or currentDepth == self.depth):
+            return [self.evaluationFunction(gameState),'done']
+
+        if(agent == 0):
+            scores = []
+            gamestates = []
+            actions = []
+            for i in gameState.getLegalActions(agent):
+                gamestates.append(self.minimax(1, currentDepth, gameState.generateSuccessor(agent, i)))
+                actions.append(i)
+            for i in gamestates:
+                scores.append(i[0])
+            maxValue = max(scores)
+            maxIndex = scores.index(maxValue)
+           
+            return[gamestates[maxIndex][0], actions[maxIndex]]
+            
+
+        else:
+            nextAgent = agent + 1
+            if(nextAgent == gameState.getNumAgents()):
+                nextAgent = 0
+            if(nextAgent == 0):
+                currentDepth += 1
+            scores = []
+            gamestates = []
+            actions = []
+            for i in gameState.getLegalActions(agent):
+                gamestates.append(self.minimax(nextAgent, currentDepth, gameState.generateSuccessor(agent, i)))
+                actions.append(i)
+            for i in gamestates:
+                scores.append(i[0])
+            
+            minValue = min(scores)
+            minIndex = scores.index(minValue)
+            return [gamestates[minIndex][0], actions[minIndex]]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -147,7 +187,58 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        value =  self.minimax(0,0,gameState, -99999999, 99999999)
+        return value[1]        
+        # util.raiseNotDefined()
+        
+    def minimax(self, agent, currentDepth, gameState, alpha, beta):
+        if(gameState.isWin() or gameState.isLose() or currentDepth == self.depth):
+            return [self.evaluationFunction(gameState),'done']
+
+        if(agent == 0):
+            gamestates = []
+            actions = []
+            tempMax = -9999999
+            index = 0
+            legalActions = gameState.getLegalActions(agent)
+            for i in range(len(legalActions)):
+                gamestates.append(self.minimax(1, currentDepth, gameState.generateSuccessor(agent, legalActions[i]), alpha, beta))
+                actions.append(legalActions[i])
+
+                if(tempMax < gamestates[i][0]):
+                    tempMax = gamestates[i][0]
+                    index = i
+
+                if(tempMax > beta):
+                    return [gamestates[index][0], actions[index]]
+                alpha = max(alpha, tempMax)
+            
+            return [gamestates[index][0],actions[index]]          
+
+        else:
+            nextAgent = agent + 1
+            if(nextAgent == gameState.getNumAgents()):
+                nextAgent = 0
+            if(nextAgent == 0):
+                currentDepth += 1
+            gamestates = []
+            actions = []
+            tempMin = 999999999
+            index = 0
+            legalActions = gameState.getLegalActions(agent)
+            for i in range(len(legalActions)):
+                gamestates.append(self.minimax(nextAgent, currentDepth, gameState.generateSuccessor(agent, legalActions[i]), alpha, beta))
+                actions.append(legalActions[i])
+                if(tempMin > gamestates[i][0]):
+                    tempMin = gamestates[i][0]
+                    index = i
+                if(tempMin < alpha):
+                    return [gamestates[index][0],actions[index]]
+                beta = min(beta, tempMin)
+
+            return [gamestates[index][0], actions[index]]
+    
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
