@@ -196,7 +196,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         
     def minimax(self, agent, currentDepth, gameState, alpha, beta):
         if(gameState.isWin() or gameState.isLose() or currentDepth == self.depth):
-            return [self.evaluationFunction(gameState),'done']
+            return [betterEvaluationFunction(gameState),'done']
 
         if(agent == 0):
             gamestates = []
@@ -299,6 +299,45 @@ def betterEvaluationFunction(currentGameState):
     """
     "*** YOUR CODE HERE ***"
 
+    whiteGhosts = []
+    activeGhosts = []
+
+    minActiveGhostDistance = 99999999999
+    minWhiteGhostDistance = 99999999999
+    minFoodDistance = 999999999
+
+    for f in food:
+        tempDist = util.manhattanDistance(pacmanPos, f)
+        if(minFoodDistance > tempDist):
+            minFoodDistance = tempDist
+
+    for ghostState in currentGameState.getGhostStates():
+        if(ghostState.scaredTimer > 0):
+            whiteGhosts.append(ghostState)
+        else:
+            activeGhosts.append(ghostState)
+
+    if(len(activeGhosts) > 0):
+        for g in activeGhosts:
+            tempDist = util.manhattanDistance(pacmanPos, g.getPosition())
+            if(minActiveGhostDistance > tempDist):
+                minActiveGhostDistance = tempDist
+    else:
+        minActiveGhostDistance = 0
+
+    if(len(whiteGhosts) > 0):
+        for g in whiteGhosts:
+            tempDist = util.manhattanDistance(pacmanPos, g.getPosition())
+            if(minWhiteGhostDistance > tempDist):
+                minWhiteGhostDistance = tempDist
+    else:
+        minWhiteGhostDistance = 0
+    
+
+
+    score = currentScore + -2*minActiveGhostDistance + -1*minWhiteGhostDistance + -30*numCapsules + -4*numFood
+
+    return score
     
     util.raiseNotDefined()
 
