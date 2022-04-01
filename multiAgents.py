@@ -298,47 +298,7 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    pacmanPos = currentGameState.getPacmanPosition()
-    food = currentGameState.getFood().asList()
-    numCapsules = len(currentGameState.getCapsules())
-    numFood = len(currentGameState.getFood().asList())
-    currentScore = currentGameState.getScore()
 
-    whiteGhosts = []
-    activeGhosts = []
-
-    minActiveGhostDistance = 99999999999
-    minWhiteGhostDistance = 99999999999
-    minFoodDistance = 999999999
-
-    # for f in food:
-    #     tempDist = util.manhattanDistance(pacmanPos, f)
-    #     if(minFoodDistance > tempDist):
-    #         minFoodDistance = tempDist
-
-    for ghostState in currentGameState.getGhostStates():
-        if(ghostState.scaredTimer > 0):
-            whiteGhosts.append(ghostState)
-        else:
-            activeGhosts.append(ghostState)
-
-    if(len(activeGhosts) > 0):
-        for g in activeGhosts:
-            tempDist = util.manhattanDistance(pacmanPos, g.getPosition())
-            if(minActiveGhostDistance > tempDist):
-                minActiveGhostDistance = tempDist
-
-    if(len(whiteGhosts) > 0):
-        for g in whiteGhosts:
-            tempDist = util.manhattanDistance(pacmanPos, g.getPosition())
-            if(minWhiteGhostDistance > tempDist):
-                minWhiteGhostDistance = tempDist
-    
-
-
-    score = currentScore + -1*minActiveGhostDistance + -1*minWhiteGhostDistance + -30*numCapsules + -4*numFood
-
-    return score
     
     util.raiseNotDefined()
 
