@@ -260,7 +260,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
         def expectiMax(gameState, agent,depth):
             if gameState.isWin() or gameState.isLose() or depth == self.depth:
-                return [self.evaluationFunction(gameState),0]
+                return [betterEvaluationFunction(gameState),0]
             
             if agent == gameState.getNumAgents()-1:
                 depth += 1
@@ -298,6 +298,11 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+    pacmanPos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood().asList()
+    numCapsules = len(currentGameState.getCapsules())
+    numFood = len(currentGameState.getFood().asList())
+    currentScore = currentGameState.getScore()
 
     whiteGhosts = []
     activeGhosts = []
